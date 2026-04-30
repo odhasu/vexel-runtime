@@ -497,118 +497,159 @@
       '</section>';
   }
 
-  // ─── 4. Product Grid ───────────────────────────────────────────
+  // ─── 4. Product Grid (glassmorphic, matches original Liquid) ────
   function renderProductGrid(s, products) {
     if (!products || !products.length) return '<p style="text-align:center;color:var(--color-text-muted);padding:40px;">No products found.</p>';
 
     var accent = colors.accent1 || '#19d400';
-    var headline = s.hero_headline || '';
-    var highlightWord = s.highlight_word || '';
-    var heroImage = s.hero_image || '';
-    var cardStyle = s.card_style || 'flat';
-    var cardClickAction = s.card_click_action || 'product';
-    var buttonLayout = s.button_layout || 'side-by-side';
-    var btn1Text = s.button_1_text || 'VIEW PRODUCT';
-    var btn1Action = s.button_1_action || 'product';
-    var btn2Text = s.button_2_text || 'ADD TO CART';
-    var btn2Action = s.button_2_action || 'add_to_cart';
-    var badgeText = s.sale_badge_text || 'SALE';
-    var showGradient = s.show_background_gradient;
-    var gradientStrength = s.gradient_strength || 50;
-    var gradientOpacity = (gradientStrength / 100 * 0.2).toFixed(2);
+    var cardBg = s.card_bg || '#111111';
+    var cardBorder = s.card_border || '#2a2a2a';
+    var cardHoverBorder = s.card_hover_border || '#19d400';
+    var imageBg = s.image_bg || '#0a0a0a';
+    var titleColor = s.title_color || '#ffffff';
+    var priceColor = s.price_color || accent;
+    var compareColor = s.compare_price_color || '#6b7280';
+    var btnBg = s.buy_btn_bg || accent;
+    var btnText = s.buy_btn_text_color || '#1a1a1a';
+    var btnLabel = s.buy_btn_label || 'BUY NOW';
+    var btnRadius = s.buy_btn_radius || 50;
+    var btnAction = s.buy_btn_action || 'product';
+    var showInfoBtn = s.show_info_btn !== false;
+    var glassmorphic = s.glassmorphic !== false;
+    var showGlow = s.show_glow !== false;
+    var glowColor = s.glow_color || accent;
+    var glowIntensity = s.glow_intensity || 35;
+    var showTopFade = s.show_top_fade;
+    var showOverlay = s.show_overlay_title !== false;
+    var overlayGreen = s.overlay_green_color || accent;
+    var overlayWhite = s.overlay_white_color || '#ffffff';
+    var overlayFontSize = s.overlay_font_size || 14;
+    var showBadge = s.show_sale_badge !== false;
+    var badgeLabel = s.sale_badge_label || 'SALE';
+    var badgeBg = s.sale_badge_bg || 'rgba(0,0,0,0.5)';
+    var badgeTextColor = s.sale_badge_text_color || '#ffffff';
+    var badgePosY = s.sale_badge_position_y || 'top';
+    var badgePosX = s.sale_badge_position_x || 'right';
+    var colsDesk = s.columns_desktop || 4;
+    var colsMob = s.columns_mobile || 2;
+    var padTop = s.padding_top || 40;
+    var padBot = s.padding_bottom || 60;
 
-    var heroHtml = '';
-    if (headline) {
-      var displayHeadline = esc(headline);
-      if (highlightWord) {
-        var escapedWord = highlightWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        displayHeadline = displayHeadline.replace(new RegExp('(' + escapedWord + ')', 'i'), '<span style="color:' + accent + '">$1</span>');
-      }
-      heroHtml = '<div style="text-align:center;padding:0 16px 32px">' +
-        '<h1 style="font-family:' + cv('font-heading') + ';font-size:clamp(2rem,6vw,3.5rem);font-weight:400;text-transform:uppercase;letter-spacing:-1px;line-height:1.1;color:' + cv('color-text') + ';margin:0">' + displayHeadline + '</h1>' +
-        (heroImage ? '<img src="' + esc(heroImage) + '" alt="" style="display:block;max-width:450px;width:100%;height:auto;margin:24px auto 0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.5)">' : '') +
-        '</div>';
-    }
+    var glowA = (glowIntensity / 100).toFixed(2);
+    var glowAMid = (glowA * 0.85).toFixed(2);
+    var glowALow = (glowA * 0.6).toFixed(2);
 
-    function makeButton(text, action, product, isPrimary, customUrl) {
-      var classes = isPrimary ? 'vx-btn-primary' : 'vx-btn-secondary';
-      var resolvedAction = action === 'default' ? (isPrimary ? btn1Action : btn2Action) : action;
-      var resolvedText = text || (isPrimary ? btn1Text : btn2Text);
+    // Glassmorphic card shadows
+    var cardShadow = glassmorphic ? 'box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03),inset 1.8px 3px 0px -2px rgba(255,255,255,0.15),inset -2px -2px 0px -2px rgba(255,255,255,0.12),0 2px 8px rgba(0,0,0,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);' : '';
+    var cardHoverShadow = glassmorphic
+      ? 'inset 0 0 0 1px rgba(255,255,255,0.06),inset 1.8px 3px 0px -2px rgba(255,255,255,0.2),inset -2px -2px 0px -2px rgba(255,255,255,0.15),0 8px 32px ' + cardHoverBorder + '33,0 2px 12px rgba(0,0,0,0.3)'
+      : '0 8px 32px ' + cardHoverBorder + '33,0 2px 12px rgba(0,0,0,0.3)';
 
-      if (resolvedAction === 'add_to_cart') {
-        return '<button class="' + classes + '" data-vx-add="' + product.variantId + '">' + esc(resolvedText.toUpperCase()) + '</button>';
-      } else if (resolvedAction === 'checkout') {
-        return '<button class="' + classes + '" data-vx-checkout="' + product.variantId + '">' + esc(resolvedText.toUpperCase()) + '</button>';
-      } else if (resolvedAction === 'description') {
-        return '<button class="' + classes + '" data-vx-desc="' + esc(product.handle) + '">' + esc(resolvedText.toUpperCase()) + '</button>';
-      } else if (resolvedAction === 'custom' && customUrl) {
-        return '<a href="' + esc(customUrl) + '" class="' + classes + '">' + esc(resolvedText.toUpperCase()) + '</a>';
-      } else {
-        return '<a href="' + esc(product.url) + '" class="' + classes + '">' + esc(resolvedText.toUpperCase()) + '</a>';
-      }
-    }
+    var css = '<style>' +
+      '.vx-pg{padding:' + padTop + 'px 20px ' + padBot + 'px;position:relative;overflow:hidden}' +
+      (showGlow ? '.vx-pg::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 1200px 800px at 10% 15%,rgba(25,212,0,' + glowA + ') 0%,transparent 60%),radial-gradient(ellipse 1000px 700px at 80% 25%,rgba(25,212,0,' + glowAMid + ') 0%,transparent 65%),radial-gradient(ellipse 1400px 900px at 90% 85%,rgba(25,212,0,' + glowA + ') 0%,transparent 70%),radial-gradient(ellipse 800px 600px at 5% 70%,rgba(25,212,0,' + glowALow + ') 0%,transparent 50%);pointer-events:none;z-index:0}' : '') +
+      (showTopFade ? '.vx-pg::after{content:"";position:absolute;top:0;left:0;right:0;height:350px;background:linear-gradient(to bottom,var(--color-bg,#000) 10%,transparent 100%);pointer-events:none;z-index:1}' : '') +
+      '.vx-pg-inner{position:relative;z-index:2;max-width:var(--max-width,1200px);margin:0 auto}' +
+      '.vx-pg-grid{display:grid;grid-template-columns:repeat(' + colsDesk + ',1fr);gap:var(--grid-gap,16px)}' +
+      '@media(max-width:768px){.vx-pg-grid{grid-template-columns:repeat(' + colsMob + ',1fr)}' +
+        (showGlow ? '.vx-pg::before{background:radial-gradient(ellipse 600px 400px at 10% 10%,rgba(25,212,0,0.15) 0%,transparent 60%),radial-gradient(ellipse 500px 350px at 90% 20%,rgba(25,212,0,0.12) 0%,transparent 65%)!important}' : '') +
+      '}' +
+      '.vx-pc{background:' + cardBg + ';border:1px solid ' + cardBorder + ';border-radius:var(--radius-card,12px);overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;' + cardShadow + '}' +
+      '.vx-pc:hover{transform:translateY(-3px);border-color:' + cardHoverBorder + ';box-shadow:' + cardHoverShadow + '}' +
+      '.vx-pc-img{position:relative;aspect-ratio:1;background:' + imageBg + ';overflow:hidden;display:block;cursor:pointer}' +
+      '.vx-pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}' +
+      '.vx-pc:hover .vx-pc-img img{transform:scale(1.03)}' +
+      '.vx-pc-overlay{position:absolute;top:12px;left:12px;font-family:var(--font-heading);font-size:' + overlayFontSize + 'px;line-height:1.3;text-transform:uppercase;z-index:2}' +
+      '.vx-pc-badge{position:absolute;' + badgePosY + ':10px;' + badgePosX + ':10px;background:' + badgeBg + ';color:' + badgeTextColor + ';font-size:11px;font-weight:700;text-transform:uppercase;padding:4px 12px;border-radius:999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);z-index:2}' +
+      '.vx-pc-info{padding:16px 16px 18px}' +
+      '.vx-pc-title{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:' + titleColor + ';margin-bottom:10px;line-height:1.3}' +
+      '.vx-pc-title a{color:inherit;text-decoration:none}' +
+      '.vx-pc-prices{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}' +
+      '.vx-price-sale{color:' + priceColor + ';font-weight:800;font-size:22px}' +
+      '.vx-price-compare{color:' + compareColor + ';text-decoration:line-through;font-size:18px}' +
+      '.vx-pc-actions{display:flex;gap:10px}' +
+      '.vx-btn-info{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,#262626 0%,#181818 50%,#121212 100%);border:1.5px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);transition:border-color .2s,color .2s;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}' +
+      '.vx-btn-info:hover{border-color:rgba(255,255,255,0.25);color:#fff}' +
+      '.vx-btn-buy{flex:1;height:54px;border-radius:' + btnRadius + 'px;background:linear-gradient(180deg,color-mix(in srgb,' + btnBg + ' 85%,#fff) 0%,' + btnBg + ' 50%,color-mix(in srgb,' + btnBg + ' 85%,#000) 100%);color:' + btnText + ';font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,0.3);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 20px color-mix(in srgb,' + btnBg + ' 25%,transparent),0 2px 8px rgba(0,0,0,0.3);transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none}' +
+      '.vx-btn-buy:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 30px color-mix(in srgb,' + btnBg + ' 40%,transparent),0 4px 16px rgba(0,0,0,0.3)}' +
+      '.vx-detail-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}' +
+      '.vx-detail-modal.open{display:flex}' +
+      '.vx-detail-modal__bg{position:absolute;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}' +
+      '.vx-detail-modal__box{position:relative;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;background:rgba(17,17,17,0.95);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),0 20px 60px rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}' +
+      '.vx-detail-modal__close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}' +
+      '.vx-detail-modal__close:hover{background:rgba(255,255,255,0.12)}' +
+      '.vx-section-title{text-align:center;font-family:var(--font-heading);font-size:clamp(24px,4vw,36px);text-transform:uppercase;letter-spacing:-.5px;margin-bottom:32px;color:#fff}' +
+      '</style>';
+
+    var titleHtml = s.title ? '<h2 class="vx-section-title">' + esc(s.title) + '</h2>' : '';
 
     var cardsHtml = products.map(function(p) {
       var hasCompare = p.comparePrice && p.comparePrice > p.price;
-      var badgePos = s.sale_badge_position || 'top-right';
-      var posStyle = badgePos === 'top-left' ? 'top:8px;left:8px' : badgePos === 'bottom-left' ? 'bottom:8px;left:8px' : badgePos === 'bottom-right' ? 'bottom:8px;right:8px' : 'top:8px;right:8px';
 
-      var b1Text = p.button1Text || '';
-      var b1Action = p.button1Action || 'default';
-      var b1Url = p.button1CustomUrl || s.button_1_custom_url || '';
-      var b2Text = p.button2Text || '';
-      var b2Action = p.button2Action || 'default';
-      var b2Url = p.button2CustomUrl || s.button_2_custom_url || '';
-
-      var buttonsHtml = '';
-      if (buttonLayout === 'single') {
-        buttonsHtml = makeButton(b1Text, b1Action, p, true, b1Url);
-      } else if (buttonLayout === 'button-link') {
-        buttonsHtml = makeButton(b1Text, b1Action, p, true, b1Url) +
-          '<a href="' + esc(p.url) + '" style="font-size:12px;color:' + cv('color-text-muted') + ';text-decoration:underline">' + esc(b2Text || btn2Text) + '</a>';
-      } else {
-        buttonsHtml = makeButton(b1Text, b1Action, p, true, b1Url) + makeButton(b2Text, b2Action, p, false, b2Url);
+      // Overlay title
+      var overlayHtml = '';
+      if (showOverlay && p.overlayGreen) {
+        overlayHtml = '<div class="vx-pc-overlay">' +
+          '<span style="color:' + overlayGreen + ';font-style:italic;font-weight:600">' + esc(p.overlayGreen) + '</span>' +
+          (p.overlayWhite ? '<br><span style="color:' + overlayWhite + ';font-weight:800">' + esc(p.overlayWhite) + '</span>' : '') +
+          '</div>';
       }
 
-      var stackDir = buttonLayout === 'stacked' ? 'flex-direction:column;' : '';
+      // Sale badge
+      var badgeHtml = '';
+      if (showBadge && (hasCompare || s.always_show_sale_badge)) {
+        badgeHtml = '<span class="vx-pc-badge">' + esc(badgeLabel) + '</span>';
+      }
 
-      return '<div class="vx-product-card">' +
-        '<a href="' + esc(p.url) + '" class="vx-product-card__img" style="position:relative;display:block;overflow:hidden;border-radius:12px;aspect-ratio:1">' +
-          (p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(p.imageAlt || p.title) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover">' : '') +
-          (hasCompare ? '<span style="position:absolute;' + posStyle + ';background:' + accent + ';color:#000;font-size:11px;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase">' + esc(badgeText) + '</span>' : '') +
-        '</a>' +
-        '<div style="padding:12px 0">' +
-          '<h3 style="font-family:' + cv('font-body') + ';font-size:14px;font-weight:600;margin-bottom:6px"><a href="' + esc(p.url) + '" style="color:' + cv('color-text') + ';text-decoration:none">' + esc(p.title) + '</a></h3>' +
-          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
-            '<span style="font-weight:700;font-size:16px;color:' + accent + '">' + formatMoney(p.price) + '</span>' +
-            (hasCompare ? '<span style="text-decoration:line-through;color:' + cv('color-text-muted') + ';font-size:13px">' + formatMoney(p.comparePrice) + '</span>' : '') +
+      // Info button
+      var infoBtnHtml = '';
+      if (showInfoBtn) {
+        infoBtnHtml = '<button class="vx-btn-info" data-vx-desc="' + esc(p.handle) + '" aria-label="Product details">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+          '</button>';
+      }
+
+      // Buy button
+      var buyBtnHtml = '';
+      if (btnAction === 'checkout') {
+        buyBtnHtml = '<button class="vx-btn-buy" data-vx-checkout="' + p.variantId + '">' + esc(btnLabel) + '</button>';
+      } else if (btnAction === 'add_to_cart') {
+        buyBtnHtml = '<button class="vx-btn-buy" data-vx-add="' + p.variantId + '">' + esc(btnLabel) + '</button>';
+      } else {
+        buyBtnHtml = '<a href="' + esc(p.url) + '" class="vx-btn-buy">' + esc(btnLabel) + '</a>';
+      }
+
+      return '<div class="vx-pc" data-product-id="' + p.id + '">' +
+        '<div style="border-radius:calc(var(--radius-card,12px) - 1px);overflow:hidden">' +
+          '<a href="' + esc(p.url) + '" class="vx-pc-img" aria-label="' + esc(p.title) + '">' +
+            (p.image ? '<img src="' + esc(p.image) + '" alt="' + esc(p.imageAlt || p.title) + '" loading="lazy" width="600" height="600">' : '<div style="width:100%;height:100%;background:' + imageBg + '"></div>') +
+            overlayHtml +
+            badgeHtml +
+          '</a>' +
+          '<div class="vx-pc-info">' +
+            '<h3 class="vx-pc-title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +
+            '<div class="vx-pc-prices">' +
+              (hasCompare ? '<span class="vx-price-compare">' + formatMoney(p.comparePrice) + '</span>' : '') +
+              '<span class="vx-price-sale">' + formatMoney(p.price) + '</span>' +
+            '</div>' +
+            '<div class="vx-pc-actions">' + infoBtnHtml + buyBtnHtml + '</div>' +
           '</div>' +
-          '<div style="display:flex;gap:8px;' + stackDir + '">' + buttonsHtml + '</div>' +
         '</div>' +
-        // Hidden description for popup
         '<script type="text/template" data-vx-product-desc="' + esc(p.handle) + '">' + esc(p.description || '') + '</script>' +
       '</div>';
     }).join('');
 
-    var css = '<style>' +
-      '.vx-product-card .vx-btn-primary,.vx-product-card .vx-btn-secondary{flex:1;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;text-align:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;border:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}' +
-      '.vx-product-card .vx-btn-primary{background:' + accent + ';color:#000}' +
-      '.vx-product-card .vx-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(25,212,0,0.3)}' +
-      '.vx-product-card .vx-btn-secondary{background:' + cv('color-bg-card') + ';color:' + cv('color-text') + ';border:1px solid ' + cv('color-border') + '}' +
-      '.vx-product-card .vx-btn-secondary:hover{border-color:' + accent + '}' +
-      '</style>';
-
-    var gradientHtml = showGradient ? '<div style="position:absolute;inset:0;background:radial-gradient(ellipse 1200px 800px at 10% 15%,rgba(25,212,0,' + gradientOpacity + ') 0%,transparent 60%),radial-gradient(ellipse 1000px 700px at 80% 25%,rgba(25,212,0,' + (gradientOpacity * 0.8).toFixed(2) + ') 0%,transparent 65%),radial-gradient(ellipse 1400px 900px at 90% 85%,rgba(25,212,0,' + gradientOpacity + ') 0%,transparent 70%);pointer-events:none;z-index:0"></div>' : '';
+    // Detail modal
+    var modalHtml = showInfoBtn ? '<div class="vx-detail-modal" id="vx-detail-modal"><div class="vx-detail-modal__bg"></div><div class="vx-detail-modal__box"><button class="vx-detail-modal__close">&times;</button><h3 id="vx-pdm-title" style="font-family:var(--font-heading);font-size:20px;font-weight:800;text-transform:uppercase;margin-bottom:16px;padding-right:40px"></h3><div id="vx-pdm-body" style="font-size:14px;line-height:1.7;color:var(--color-text-muted,#9ca3af)"></div><div id="vx-pdm-price" style="display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08)"></div></div></div>' : '';
 
     return css +
-      '<div' + (showGradient ? ' style="position:relative;overflow:hidden"' : '') + '>' +
-      gradientHtml +
-      '<div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:20px 20px 60px">' +
-        heroHtml +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">' +
-          cardsHtml +
+      '<div class="vx-pg">' +
+        '<div class="vx-pg-inner">' +
+          titleHtml +
+          '<div class="vx-pg-grid">' + cardsHtml + '</div>' +
         '</div>' +
-      '</div></div>';
+      '</div>' +
+      modalHtml;
   }
 
   function attachProductGrid() {
