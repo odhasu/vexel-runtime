@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(SUPABASE_URL=\"https://ucrnihoahzvepbywuqie.supabase.co\" SUPABASE_SERVICE_ROLE_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjcm5paG9haHp2ZXBieXd1cWllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjY0NDc4MCwiZXhwIjoyMDkyMjIwNzgwfQ.5LCH5l9IqsHIZ0tfJCvMTyotmkGplI0wxKxxgmjuecc\" node index.js)",
+      "Bash(curl -s -X POST http://localhost:3000/api/validate -H 'Content-Type: application/json' -d '{\"licenseKey\":\"TEST-1234-FAKE-KEY1\",\"domain\":\"test.myshopify.com\"}')",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(kill %1)",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill:*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/validate -H 'Content-Type: application/json' -d '{\"licenseKey\":\"TEST-FAKE-KEY1-XXXX\",\"domain\":\"test.myshopify.com\"}')",
+      "Bash(curl -s \"https://ucrnihoahzvepbywuqie.supabase.co/rest/v1/\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjcm5paG9haHp2ZXBieXd1cWllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjY0NDc4MCwiZXhwIjoyMDkyMjIwNzgwfQ.5LCH5l9IqsHIZ0tfJCvMTyotmkGplI0wxKxxgmjuecc\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\([p for p in d.get\\('paths',{}\\).keys\\(\\) if p != '/']\\)\")"
     ]
   }
 }
