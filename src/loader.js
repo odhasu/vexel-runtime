@@ -1294,9 +1294,19 @@
   // LICENSE VALIDATION + BOOT
   // ═══════════════════════════════════════════════════════════════
 
+  // Owner keys — these always validate without server check
+  var OWNER_KEYS = ['6A23-B65D-7DA1-6992'];
+
   function boot() {
     // Editor bypass — always render
     if (isEditor) {
+      renderAllSections();
+      hideLoader();
+      return;
+    }
+
+    // Owner key bypass — always render
+    if (OWNER_KEYS.indexOf(licenseKey) !== -1) {
       renderAllSections();
       hideLoader();
       return;
