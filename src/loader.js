@@ -135,7 +135,7 @@
         '</div>' +
         '<div style="background:#0a0f1a;border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px">' +
           '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
-          '<span style="color:#93c5fd;font-size:13px">Don\'t have a license? <a href="https://ogresells.com" target="_blank" style="color:#fff;font-weight:600;text-decoration:underline">Purchase here</a></span>' +
+          '<span style="color:#93c5fd;font-size:13px">Don\'t have a license? <a href="https://vexelthemes.com" target="_blank" style="color:#fff;font-weight:600;text-decoration:underline">Purchase here</a></span>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -159,7 +159,7 @@
         '</div>' +
         '<h1 style="color:#fff;font-size:24px;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px">License Invalid</h1>' +
         '<p style="color:#9ca3af;font-size:15px;line-height:1.6;margin-bottom:24px">' + esc(message) + '</p>' +
-        '<a href="https://ogresells.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;background:#19d400;color:#000;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.03em;text-decoration:none;transition:transform 0.2s">Get Your License Now</a>' +
+        '<a href="https://vexelthemes.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;background:#19d400;color:#000;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.03em;text-decoration:none;transition:transform 0.2s">Get Your License Now</a>' +
         '<div style="margin-top:20px;background:#110a0a;border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:10px">' +
           '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
           '<span style="color:#fca5a5;font-size:13px">Check your license key in Theme Settings &gt; License</span>' +
@@ -974,7 +974,7 @@
     var paddingTop = s.padding_top || 48;
     var paddingBottom = s.padding_bottom || 48;
     var ctaText = s.cta_text || 'Get this store design';
-    var ctaUrl = s.cta_url || 'https://ogresells.com';
+    var ctaUrl = s.cta_url || 'https://vexelthemes.com';
     var ctaColor = s.cta_color || '#19d400';
     var ctaTextColor = s.cta_text_color || '#000000';
     var footerLogo = s.logo_url || null;
@@ -1023,7 +1023,7 @@
     }
 
     // Vexel attribution link (protected by footer monitor)
-    var vexelLink = '<div style="margin-top:16px"><a href="https://ogresells.com" target="_blank" rel="noopener" data-vx-attribution style="color:' + linkColor + ';font-size:11px;text-decoration:none;opacity:0.6">Powered by Vexel</a></div>';
+    var vexelLink = '<div style="margin-top:16px"><a href="https://vexelthemes.com" target="_blank" rel="noopener" data-vx-attribution style="color:' + linkColor + ';font-size:11px;text-decoration:none;opacity:0.6">Powered by Vexel</a></div>';
 
     return '<footer class="vx-footer" data-vx-footer style="background:' + bg + ';border-top:1px solid ' + borderTop + ';padding:' + paddingTop + 'px 20px ' + paddingBottom + 'px;text-align:center">' +
       brandHtml + socialHtml + policyHtml + copyrightHtml + ctaHtml + vexelLink +
