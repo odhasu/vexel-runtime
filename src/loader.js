@@ -561,17 +561,17 @@
       '.vx-pc:hover .vx-pc-img img{transform:scale(1.03)}' +
       '.vx-pc-overlay{position:absolute;top:12px;left:12px;font-family:var(--font-heading);font-size:' + overlayFontSize + 'px;line-height:1.3;text-transform:uppercase;z-index:2}' +
       '.vx-pc-badge{position:absolute;' + badgePosY + ':10px;' + badgePosX + ':10px;background:' + badgeBg + ';color:' + badgeTextColor + ';font-size:11px;font-weight:700;text-transform:uppercase;padding:4px 12px;border-radius:999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);z-index:2}' +
-      '.vx-pc-info{padding:16px 16px 18px}' +
-      '.vx-pc-title{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:' + titleColor + ';margin-bottom:10px;line-height:1.3}' +
+      '.vx-pc-info{padding:14px}' +
+      '.vx-pc-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:' + titleColor + ';margin-bottom:8px;line-height:1.3}' +
       '.vx-pc-title a{color:inherit;text-decoration:none}' +
-      '.vx-pc-prices{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}' +
-      '.vx-price-sale{color:' + priceColor + ';font-weight:800;font-size:22px}' +
-      '.vx-price-compare{color:' + compareColor + ';text-decoration:line-through;font-size:18px}' +
-      '.vx-pc-actions{display:flex;gap:10px}' +
-      '.vx-btn-info{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,#262626 0%,#181818 50%,#121212 100%);border:1.5px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);transition:border-color .2s,color .2s;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}' +
-      '.vx-btn-info:hover{border-color:rgba(255,255,255,0.25);color:#fff}' +
-      '.vx-btn-buy{flex:1;height:54px;border-radius:' + btnRadius + 'px;background:linear-gradient(180deg,color-mix(in srgb,' + btnBg + ' 85%,#fff) 0%,' + btnBg + ' 50%,color-mix(in srgb,' + btnBg + ' 85%,#000) 100%);color:' + btnText + ';font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,0.3);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 20px color-mix(in srgb,' + btnBg + ' 25%,transparent),0 2px 8px rgba(0,0,0,0.3);transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none}' +
-      '.vx-btn-buy:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 30px color-mix(in srgb,' + btnBg + ' 40%,transparent),0 4px 16px rgba(0,0,0,0.3)}' +
+      '.vx-pc-prices{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}' +
+      '.vx-price-sale{color:' + priceColor + ';font-weight:800;font-size:16px}' +
+      '.vx-price-compare{color:' + compareColor + ';text-decoration:line-through;font-size:14px}' +
+      '.vx-pc-actions{display:flex;gap:8px}' +
+      '.vx-btn-info{width:44px;height:44px;border-radius:var(--radius-button,8px);background:#1a1a1a;border:1px solid ' + cardBorder + ';display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);transition:background .2s,border-color .2s,color .2s;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}' +
+      '.vx-btn-info:hover{background:#222;border-color:#fff;color:#fff}' +
+      '.vx-btn-buy{flex:1;height:44px;border-radius:28px;background:linear-gradient(180deg,color-mix(in srgb,' + btnBg + ' 85%,#fff) 0%,' + btnBg + ' 50%,color-mix(in srgb,' + btnBg + ' 85%,#000) 100%);color:' + btnText + ';font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,0.3);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 20px color-mix(in srgb,' + btnBg + ' 25%,transparent),0 2px 8px rgba(0,0,0,0.3);transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none}' +
+      '.vx-btn-buy:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),inset 0 -1px 0 rgba(0,0,0,0.15),0 0 30px color-mix(in srgb,' + btnBg + ' 40%,transparent),0 4px 16px rgba(0,0,0,0.3)}' +
       '.vx-detail-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}' +
       '.vx-detail-modal.open{display:flex}' +
       '.vx-detail-modal__bg{position:absolute;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}' +
@@ -605,7 +605,7 @@
       var infoBtnHtml = '';
       if (showInfoBtn) {
         infoBtnHtml = '<button class="vx-btn-info" data-vx-desc="' + esc(p.handle) + '" aria-label="Product details">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
           '</button>';
       }
 
