@@ -79,9 +79,13 @@
   // ─── Shopify Editor Bypass ─────────────────────────────────────
   var isEditor = window.Shopify && window.Shopify.designMode;
 
-  // ─── SessionStorage Cache ──────────────────────────────────────
+  // ─── SessionStorage Cache (short-term, per tab) ────────────────
   var CACHE_KEY = 'vx_license';
   var CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+  // ─── LocalStorage Grace (long-term, cross-tab) ────────────────
+  var GRACE_KEY = 'vx_grace';
+  var GRACE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
   function getCachedResult() {
     try {
@@ -103,7 +107,23 @@
         plan: plan,
         expiresAt: Date.now() + CACHE_TTL
       }));
+      // On successful validation, extend the grace period
+      if (status === 'ok') {
+        localStorage.setItem(GRACE_KEY, JSON.stringify({
+          plan: plan,
+          validatedAt: Date.now()
+        }));
+      }
     } catch(e) {}
+  }
+
+  function hasGracePeriod() {
+    try {
+      var raw = localStorage.getItem(GRACE_KEY);
+      if (!raw) return false;
+      var data = JSON.parse(raw);
+      return (Date.now() - data.validatedAt) < GRACE_TTL;
+    } catch(e) { return false; }
   }
 
   // ─── Setup Page (No License) ──────────────────────────────────
@@ -1419,19 +1439,9 @@
   // LICENSE VALIDATION + BOOT
   // ═══════════════════════════════════════════════════════════════
 
-  // Owner keys — these always validate without server check
-  var OWNER_KEYS = ['6A23-B65D-7DA1-6992'];
-
   function boot() {
     // Editor bypass — always render
     if (isEditor) {
-      renderAllSections();
-      hideLoader();
-      return;
-    }
-
-    // Owner key bypass — always render
-    if (OWNER_KEYS.indexOf(licenseKey) !== -1) {
       renderAllSections();
       hideLoader();
       return;
@@ -1490,10 +1500,16 @@
     })
     .catch(function(err) {
       if (err.message === 'invalid' || err.message === 'rate_limited') return;
-      // FAIL OPEN — if server is down, render anyway
-      console.warn('[Vexel] Server unreachable, rendering in fail-open mode');
-      renderAllSections();
-      hideLoader();
+      // FAIL OPEN — only if validated successfully within last 24 hours
+      if (hasGracePeriod()) {
+        console.warn('[Vexel] Server unreachable, rendering in grace period');
+        renderAllSections();
+        hideLoader();
+      } else {
+        console.warn('[Vexel] Server unreachable, no grace period — showing error');
+        hideLoader();
+        showInvalidLicense('server_unreachable');
+      }
     });
   }
 
