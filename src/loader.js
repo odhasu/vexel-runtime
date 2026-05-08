@@ -1225,6 +1225,129 @@
     } catch(e) {}
   }
 
+  // ─── 11. Results Carousel ────────────────────────────────────
+  function renderResultsCarousel(s, blocks) {
+    if (!blocks || !blocks.length) return '';
+
+    var cardBg = s.card_bg || '#111111';
+    var cardBorder = s.card_border || '#2a2a2a';
+    var cardRadius = s.card_radius || 16;
+    var cardWidth = s.card_width || 300;
+    var cardWidthMob = s.card_width_mobile || 260;
+    var cardGap = s.card_gap || 16;
+    var imgHeight = s.image_height || 380;
+    var imgHeightMob = Math.max(imgHeight - 60, 200);
+    var padTop = s.padding_top || 60;
+    var padBot = s.padding_bottom || 60;
+    var autoScroll = s.auto_scroll !== false;
+    var scrollSpeed = s.auto_scroll_speed || 30;
+    var title = s.title || 'What Our Customers Say';
+    var subtitle = s.subtitle || 'Real results from real resellers';
+
+    var uid = 'vx-rc-' + Math.random().toString(36).substr(2, 6);
+
+    var css = '<style>' +
+      '.vx-rc{padding:' + padTop + 'px 0 ' + padBot + 'px;overflow:hidden;position:relative}' +
+      '.vx-rc-header{text-align:center;padding:0 20px;margin-bottom:36px}' +
+      '.vx-rc-header h2{font-family:var(--font-heading);font-size:clamp(1.5rem,5vw,2.5rem);font-weight:400;text-transform:uppercase;letter-spacing:1px;line-height:1.1;color:var(--color-text,#fff);margin:0 0 10px}' +
+      '.vx-rc-header p{color:var(--color-text-muted,#9ca3af);font-size:15px;line-height:1.5;margin:0;font-family:var(--font-body)}' +
+      '.vx-rc-wrap{position:relative;width:100%;cursor:grab}' +
+      '.vx-rc-wrap:active{cursor:grabbing}' +
+      '.vx-rc-track{display:flex;gap:' + cardGap + 'px;padding:0 20px;will-change:transform}' +
+      '.vx-rc-track--auto{animation:vxRcScroll ' + scrollSpeed + 's linear infinite}' +
+      '.vx-rc-track--auto:hover{animation-play-state:paused}' +
+      '@keyframes vxRcScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}' +
+      '.vx-rc-card{flex-shrink:0;width:' + cardWidth + 'px;background:' + cardBg + ';border:1px solid ' + cardBorder + ';border-radius:' + cardRadius + 'px;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}' +
+      '.vx-rc-card:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(255,255,255,0.15);box-shadow:0 12px 40px rgba(0,0,0,0.4)}' +
+      '.vx-rc-card__img{width:100%;height:' + imgHeight + 'px;overflow:hidden}' +
+      '.vx-rc-card__img img{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none;user-select:none;pointer-events:none}' +
+      '.vx-rc-card__cap{padding:14px 16px;font-size:13px;color:var(--color-text-muted,#9ca3af);font-family:var(--font-body);line-height:1.4}' +
+      '.vx-rc-wrap::before,.vx-rc-wrap::after{content:"";position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}' +
+      '.vx-rc-wrap::before{left:0;background:linear-gradient(to right,var(--color-bg,#0a0a0a),transparent)}' +
+      '.vx-rc-wrap::after{right:0;background:linear-gradient(to left,var(--color-bg,#0a0a0a),transparent)}' +
+      '@media(max-width:768px){.vx-rc-card{width:' + cardWidthMob + 'px}.vx-rc-card__img{height:' + imgHeightMob + 'px}.vx-rc-wrap::before,.vx-rc-wrap::after{width:40px}}' +
+      '</style>';
+
+    function cardHtml(item, hidden) {
+      var h = '<div class="vx-rc-card"' + (hidden ? ' aria-hidden="true"' : '') + '>' +
+        '<div class="vx-rc-card__img">' +
+          '<img src="' + esc(item.image) + '" alt="' + esc(item.alt || 'Customer result') + '" loading="lazy" width="600" height="' + imgHeight + '">' +
+        '</div>';
+      if (item.caption) {
+        h += '<div class="vx-rc-card__cap">' + esc(item.caption) + '</div>';
+      }
+      return h + '</div>';
+    }
+
+    var cardsHtml = blocks.map(function(b) { return cardHtml(b, false); }).join('');
+    var dupeHtml = autoScroll ? blocks.map(function(b) { return cardHtml(b, true); }).join('') : '';
+
+    var trackClass = 'vx-rc-track' + (autoScroll ? ' vx-rc-track--auto' : '');
+
+    return css +
+      '<div class="vx-rc">' +
+        '<div class="vx-rc-header">' +
+          '<h2>' + esc(title) + '</h2>' +
+          (subtitle ? '<p>' + esc(subtitle) + '</p>' : '') +
+        '</div>' +
+        '<div class="vx-rc-wrap" id="' + uid + '-wrap">' +
+          '<div class="' + trackClass + '" id="' + uid + '-track">' +
+            cardsHtml + dupeHtml +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function attachResultsCarousel() {
+    var wraps = document.querySelectorAll('[class*="vx-rc-wrap"]');
+    wraps.forEach(function(carousel) {
+      var track = carousel.querySelector('[class*="vx-rc-track"]');
+      if (!track || track.classList.contains('vx-rc-track--auto')) return;
+
+      var isDragging = false;
+      var startX = 0;
+      var scrollLeft = 0;
+      var currentTranslate = 0;
+
+      carousel.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.pageX;
+        scrollLeft = currentTranslate;
+        track.style.transition = 'none';
+        carousel.style.cursor = 'grabbing';
+      });
+      carousel.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var dx = e.pageX - startX;
+        currentTranslate = scrollLeft + dx;
+        var maxScroll = -(track.scrollWidth - carousel.offsetWidth);
+        currentTranslate = Math.max(maxScroll, Math.min(0, currentTranslate));
+        track.style.transform = 'translateX(' + currentTranslate + 'px)';
+      });
+      document.addEventListener('mouseup', function() {
+        if (!isDragging) return;
+        isDragging = false;
+        carousel.style.cursor = 'grab';
+      });
+      carousel.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        startX = e.touches[0].pageX;
+        scrollLeft = currentTranslate;
+        track.style.transition = 'none';
+      }, { passive: true });
+      carousel.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        var dx = e.touches[0].pageX - startX;
+        currentTranslate = scrollLeft + dx;
+        var maxScroll = -(track.scrollWidth - carousel.offsetWidth);
+        currentTranslate = Math.max(maxScroll, Math.min(0, currentTranslate));
+        track.style.transform = 'translateX(' + currentTranslate + 'px)';
+      }, { passive: true });
+      carousel.addEventListener('touchend', function() { isDragging = false; });
+    });
+  }
+
   // ═══════════════════════════════════════════════════════════════
   // RENDER ENGINE
   // ═══════════════════════════════════════════════════════════════
@@ -1234,6 +1357,7 @@
     'header': { render: renderHeader, attach: attachHeader },
     'hero': { render: renderHero },
     'product-grid': { render: renderProductGrid },
+    'results-carousel': { render: renderResultsCarousel, attach: attachResultsCarousel },
     'testimonials': { render: renderTestimonials },
     'faq': { render: renderFAQ, attach: attachFAQ },
     'reviews': { render: renderReviews, attach: attachReviews },
@@ -1258,15 +1382,16 @@
         try { settings = JSON.parse(settingsEl.textContent); } catch(e) {}
       }
 
-      // Read products JSON (if applicable)
-      var products = null;
-      var productsEl = document.querySelector('script[data-vx-products="' + type + '"]');
-      if (productsEl) {
-        try { products = JSON.parse(productsEl.textContent); } catch(e) {}
+      // Read data JSON (products or blocks)
+      var data = null;
+      var dataEl = document.querySelector('script[data-vx-products="' + type + '"]') ||
+                   document.querySelector('script[data-vx-blocks="' + type + '"]');
+      if (dataEl) {
+        try { data = JSON.parse(dataEl.textContent); } catch(e) {}
       }
 
       // Render
-      var html = products !== null ? renderer.render(settings, products) : renderer.render(settings);
+      var html = data !== null ? renderer.render(settings, data) : renderer.render(settings);
       if (html) {
         shell.innerHTML = html;
         shell.classList.remove('vx-shell--loading');
