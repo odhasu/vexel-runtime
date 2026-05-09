@@ -464,8 +464,8 @@
     var titleAfter = s.title_after || 'JOURNEY TODAY';
     var highlightColor = s.highlight_color || '#39ff14';
     var titleColor = s.title_color || '#ffffff';
-    var titleSizeDesktop = s.title_size_desktop || 48;
-    var titleSizeMobile = s.title_size_mobile || 28;
+    var titleSizeDesktop = s.title_size_desktop || 64;
+    var titleSizeMobile = s.title_size_mobile || 36;
     var trustPrefix = s.trust_prefix || 'Trusted By';
     var trustCount = s.trust_count || '10,000+';
     var trustSuffix = s.trust_suffix || 'Resellers';
@@ -479,6 +479,22 @@
     var avatarSize = s.avatar_size || 36;
     var heroFont = s.hero_font || 'Satoshi';
     var trustFontSize = s.trust_font_size || 15;
+    var bgImage = s.bg_image || null;
+    var bgGradientStrength = s.bg_gradient_strength != null ? s.bg_gradient_strength : 40;
+    var bgImagePosition = s.bg_image_position || 'center center';
+    var showBtn1 = s.show_btn_1 !== false;
+    var showBtn2 = s.show_btn_2 !== false;
+    var btn1Text = s.btn_1_text || 'BUY NOW';
+    var btn1Url = s.btn_1_url || '';
+    var btn1Action = s.btn_1_action || 'scroll';
+    var btn1Bg = s.btn_1_bg || '#19d400';
+    var btn1TextColor = s.btn_1_text_color || '#000000';
+    var btn2Text = s.btn_2_text || 'ADD TO CART';
+    var btn2Url = s.btn_2_url || '';
+    var btn2Action = s.btn_2_action || 'scroll';
+    var btn2Bg = s.btn_2_bg || 'transparent';
+    var btn2TextColor = s.btn_2_text_color || '#ffffff';
+    var btnLayout = s.btn_layout || 'side-by-side';
 
     var avatarsHtml = '';
     if (showAvatars) {
@@ -495,14 +511,50 @@
       avatarsHtml += '</div>';
     }
 
-    var glowCss = showGlow ? '.vx-hero::before{content:\'\';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,' + glowColor + '15 0%,transparent 70%);pointer-events:none;z-index:0}@media(max-width:768px){.vx-hero::before{width:300px;height:300px;background:radial-gradient(ellipse,' + glowColor + '10 0%,transparent 70%)}}' : '';
+    // Background image CSS
+    var bgCss = '';
+    if (bgImage) {
+      var gradAlpha = (bgGradientStrength / 100).toFixed(2);
+      bgCss = '.vx-hero{background-image:linear-gradient(to bottom,rgba(0,0,0,' + gradAlpha + ') 0%,rgba(0,0,0,' + gradAlpha + ') 100%),url(' + esc(bgImage) + ');background-size:cover;background-position:' + bgImagePosition + ';background-repeat:no-repeat}';
+    }
+
+    var glowCss = showGlow && !bgImage ? '.vx-hero::before{content:\'\';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,' + glowColor + '15 0%,transparent 70%);pointer-events:none;z-index:0}@media(max-width:768px){.vx-hero::before{width:300px;height:300px;background:radial-gradient(ellipse,' + glowColor + '10 0%,transparent 70%)}}' : '';
+
+    // CTA buttons
+    var btnFlexDir = btnLayout === 'stacked' ? 'column' : 'row';
+    var buttonsHtml = '';
+    if (showBtn1 || showBtn2) {
+      buttonsHtml = '<div class="vx-hero__buttons">';
+      if (showBtn1) {
+        var btn1IsFilled = btn1Bg !== 'transparent';
+        var btn1DataAttr = btn1Action === 'scroll' ? ' data-vx-hero-scroll' : (btn1Action === 'checkout' ? ' data-vx-hero-checkout' : '');
+        var btn1Href = btn1Action === 'link' && btn1Url ? btn1Url : '#';
+        buttonsHtml += '<a href="' + esc(btn1Href) + '" class="vx-hero__btn vx-hero__btn--filled"' + btn1DataAttr + ' style="background:' + btn1Bg + ';color:' + btn1TextColor + '">' + esc(btn1Text) + '</a>';
+      }
+      if (showBtn2) {
+        var btn2DataAttr = btn2Action === 'scroll' ? ' data-vx-hero-scroll' : (btn2Action === 'checkout' ? ' data-vx-hero-checkout' : '');
+        var btn2Href = btn2Action === 'link' && btn2Url ? btn2Url : '#';
+        var btn2Style = btn2Bg === 'transparent' || btn2Bg === '#000000'
+          ? 'background:transparent;color:' + btn2TextColor + ';border:2px solid rgba(255,255,255,0.3)'
+          : 'background:' + btn2Bg + ';color:' + btn2TextColor;
+        buttonsHtml += '<a href="' + esc(btn2Href) + '" class="vx-hero__btn vx-hero__btn--outline"' + btn2DataAttr + ' style="' + btn2Style + '">' + esc(btn2Text) + '</a>';
+      }
+      buttonsHtml += '</div>';
+    }
 
     var css = '<style>' +
       '.vx-hero{text-align:center;padding:' + paddingTop + 'px 20px ' + paddingBottom + 'px;position:relative;overflow:hidden}' +
+      bgCss +
       glowCss +
       '.vx-hero__content{position:relative;z-index:1}' +
-      '.vx-hero__title{font-family:\'' + heroFont + '\',' + cv('font-heading') + ';font-size:clamp(' + titleSizeMobile + 'px,6vw,' + titleSizeDesktop + 'px);font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:1.1;color:' + titleColor + ';margin-bottom:24px}' +
+      '.vx-hero__title{font-family:\'' + heroFont + '\',' + cv('font-heading') + ';font-size:clamp(' + titleSizeMobile + 'px,8vw,' + titleSizeDesktop + 'px);font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:1.1;color:' + titleColor + ';margin-bottom:24px}' +
       '.vx-hero__highlight{background:linear-gradient(135deg,' + highlightColor + ',' + highlightColor + 'cc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}' +
+      '.vx-hero__buttons{display:flex;flex-direction:' + btnFlexDir + ';align-items:center;justify-content:center;gap:16px;margin-top:32px}' +
+      '.vx-hero__btn{display:inline-flex;align-items:center;justify-content:center;padding:16px 40px;font-family:' + cv('font-heading') + ';font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:50px;text-decoration:none;transition:transform .2s,box-shadow .2s,opacity .2s;cursor:pointer}' +
+      '.vx-hero__btn--filled{box-shadow:0 0 20px rgba(25,212,0,0.3),0 4px 15px rgba(0,0,0,0.3)}' +
+      '.vx-hero__btn--filled:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(25,212,0,0.5),0 6px 20px rgba(0,0,0,0.3)}' +
+      '.vx-hero__btn--outline:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.6)}' +
+      '@media(max-width:600px){.vx-hero__buttons{flex-direction:column}.vx-hero__btn{width:100%;max-width:320px;padding:14px 32px;font-size:15px}}' +
       '</style>';
 
     return css +
@@ -513,8 +565,39 @@
           '<span>' + esc(trustPrefix) + '</span><span style="color:' + trustCountColor + ';font-weight:800">' + esc(trustCount) + '</span><span>' + esc(trustSuffix) + '</span>' +
         '</div>' +
         avatarsHtml +
+        buttonsHtml +
       '</div>' +
       '</section>';
+  }
+
+  function attachHero() {
+    // Scroll-to-products buttons
+    document.querySelectorAll('[data-vx-hero-scroll]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var grid = document.querySelector('[data-vx-section="product-grid"]');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    // Checkout buttons — add first available product to cart then redirect
+    document.querySelectorAll('[data-vx-hero-checkout]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var productsEl = document.querySelector('script[data-vx-products="product-grid"]');
+        if (productsEl) {
+          try {
+            var prods = JSON.parse(productsEl.textContent);
+            if (prods && prods.length && prods[0].variantId) {
+              fetch('/cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: [{ id: Number(prods[0].variantId), quantity: 1 }] })
+              }).then(function() { window.location.href = '/checkout'; });
+            }
+          } catch(ex) {}
+        }
+      });
+    });
   }
 
   // ─── 4. Product Grid (glassmorphic, matches original Liquid) ────
@@ -535,6 +618,7 @@
     var btnRadius = s.buy_btn_radius || 50;
     var btnAction = s.buy_btn_action || 'product';
     var showInfoBtn = s.show_info_btn !== false;
+    var showDescription = s.show_description !== false;
     var glassmorphic = s.glassmorphic !== false;
     var showGlow = s.show_glow !== false;
     var glowColor = s.glow_color || accent;
@@ -584,6 +668,7 @@
       '.vx-pc-info{padding:14px}' +
       '.vx-pc-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:' + titleColor + ';margin-bottom:8px;line-height:1.3}' +
       '.vx-pc-title a{color:inherit;text-decoration:none}' +
+      '.vx-pc-desc{font-size:12px;line-height:1.5;color:var(--color-text-muted,#9ca3af);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}' +
       '.vx-pc-prices{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}' +
       '.vx-price-sale{color:' + priceColor + ';font-weight:800;font-size:16px}' +
       '.vx-price-compare{color:' + compareColor + ';text-decoration:line-through;font-size:14px}' +
@@ -648,6 +733,7 @@
           '</a>' +
           '<div class="vx-pc-info">' +
             '<h3 class="vx-pc-title"><a href="' + esc(p.url) + '">' + esc(p.title) + '</a></h3>' +
+            (showDescription && p.description ? '<p class="vx-pc-desc">' + esc(p.description.substring(0, 120)) + '</p>' : '') +
             '<div class="vx-pc-prices">' +
               (hasCompare ? '<span class="vx-price-compare">' + formatMoney(p.comparePrice) + '</span>' : '') +
               '<span class="vx-price-sale">' + formatMoney(p.price) + '</span>' +
@@ -1375,7 +1461,7 @@
   var renderers = {
     'urgency-bar': { render: renderUrgencyBar, attach: attachUrgencyBar },
     'header': { render: renderHeader, attach: attachHeader },
-    'hero': { render: renderHero },
+    'hero': { render: renderHero, attach: attachHero },
     'product-grid': { render: renderProductGrid },
     'results-carousel': { render: renderResultsCarousel, attach: attachResultsCarousel },
     'testimonials': { render: renderTestimonials },
